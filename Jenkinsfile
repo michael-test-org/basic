@@ -1,5 +1,9 @@
 node('master') {
-  stage('demo') {
-    echo "Hello World";
-  }
+    stage('checkout') {
+        checkout scm
+    }
+
+    stage('build') {
+        sh 'composer install'
+    }
 }
