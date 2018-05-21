@@ -35,4 +35,8 @@ node('master') {
       input message: "Deploy this build?"
     }
 
+    stage('build-deb') {
+      sh "fpm -s dir -t deb -n michaeltest -v '1.0.${env.BUILD_NUMBER}' .=/var/www/michaeltest"
+    }
+
 }
