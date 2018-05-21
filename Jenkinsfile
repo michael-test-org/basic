@@ -31,5 +31,8 @@ node('master') {
         ])
     }
 
+    stage('confirm-deploy') {
+      input message: "Deploy this build?"
+    }
 
 }
