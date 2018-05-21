@@ -6,4 +6,8 @@ node('master') {
     stage('build') {
         sh 'composer install'
     }
+
+    stage('test') {
+      sh './vendor/bin/phpunit';
+    }
 }
