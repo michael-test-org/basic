@@ -32,11 +32,19 @@ node('master') {
     }
 
     stage('confirm-deploy') {
-      input message: "Deploy this build?"
+        input message: "Deploy this build?"
     }
 
     stage('build-deb') {
-      sh "fpm -s dir -t deb -n michaeltest -v '1.0.${env.BUILD_NUMBER}' .=/var/www/michaeltest"
+        sh "fpm -s dir -t deb -n michaeltest -v '1.0.${env.BUILD_NUMBER}' .=/var/www/michaeltest"
+    }
+
+    stage('deploy') {
+        withCredentials([[$class: 'FileBinding', credentialsId: 'ssh-key', variable: 'SECRET_FILE']]) {
+            dir('ansible') {
+                sh "ansible-playbook -i inv --key-file=$SECRET_FILE playbook.yml --extra-vars '{\"workspace\": \"${env.WORKSPACE}\"}'"
+            }
+        }
     }
 
 }

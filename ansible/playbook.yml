@@ -1,0 +1,23 @@
+---
+- hosts: all
+  tasks:
+    - name: Find artifact
+      local_action: shell ls --color=never -tR ../michaeltest_* | head -n1
+      register: deb_name
+    - name: Show Deb
+      debug: msg="{{deb_name.stdout}}"
+    - name: Deploy Deb
+      copy: src="{{deb_name.stdout}}" dest=/tmp/michael.deb
+    - name: Install
+      apt: deb=/tmp/michael.deb state=present
+    - name: Fix storage permissions
+      file: dest=/var/www/michaeltest/storage owner=www-data group=www-data recurse=yes
+    - name: Fix Documentroot
+      lineinfile:
+        dest: /etc/apache2/sites-enabled/000-default.conf
+        regexp: 'DocumentRoot'
+        line: 'DocumentRoot /var/www/michaeltest/public'
+      notify: restart apache
+  handlers:
+    - name: restart apache
+      service: name=apache2 state=restarted
