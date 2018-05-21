@@ -7,12 +7,12 @@ node('master') {
         sh 'composer install'
     }
 
-    stage('test') {
-      sh './vendor/bin/phpunit';
-    }
-
     stage('create-env-keys') {
         sh 'cp .env.example .env';
         sh 'php artisan key:generate';
+    }
+
+    stage('test') {
+      sh './vendor/bin/phpunit';
     }
 }
